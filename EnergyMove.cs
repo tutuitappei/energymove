@@ -6,18 +6,18 @@ using UnityEngine;
 
 public class EnergyMove : MonoBehaviour
 {
-    private float rotation;
+    private float rotation;                             //回転速度
     [SerializeField] private double rotationSpeed = 0.0;
 
-    [SerializeField] private int pattern = 0;
+    [SerializeField] private int pattern = 0;           //行動番号
 
-     private float startTime = 0.0f;
-    [SerializeField] private float interval = 0.0f;
+     private float startTime = 0.0f;                    //動き初めのタイミング
+    [SerializeField] private float waittime = 0.0f;     //動くまでの間
 
-    private Vector3 startPosition;
-    [SerializeField] private double width = 0.0;
+    private Vector3 startPosition;                      //動く前のポジション
+    [SerializeField] private double width = 0.0;        //動きの幅
 
-    bool moveFlag = true;
+    private bool moveFlag = true;                       //折り返し用フラグ
 
     // Start is called before the first frame update
     void Start()
@@ -32,7 +32,7 @@ public class EnergyMove : MonoBehaviour
         startTime += Time.deltaTime;
         transform.Rotate(new Vector3(0,rotation,0));
         
-        if (startTime >= interval)
+        if (startTime >= waittime)
         {
             switch (pattern)
             {
@@ -47,59 +47,164 @@ public class EnergyMove : MonoBehaviour
                 case 3:
                     MoveUpDown();
                     break;
+                case 4:
+                    MoveCircle();
+                    break;
                 default:
                     break;
             }
         }
     }
 
+    //左右移動
     void MoveLR()
     {
-        if (moveFlag)
+        //初動+方向
+        if (width > 0)
         {
-            transform.position += new Vector3(2f * Time.deltaTime, 0f, 0f);
-            if (transform.position.x >= startPosition.x + width)
+            if (moveFlag)
             {
-                moveFlag = false;
+                transform.position += new Vector3(2f * Time.deltaTime, 0f, 0f);
+                if (transform.position.x >= startPosition.x + width)
+                {
+                    moveFlag = false;
+                }
+            }
+            else
+            {
+                transform.position -= new Vector3(2f * Time.deltaTime, 0f, 0f);
+                if (transform.position.x <= startPosition.x)
+                {
+                    moveFlag = true;
+                }
+            }
+        }
+        //初動-方向
+        else if (width < 0)
+        {
+            if (moveFlag)
+            {
+                transform.position -= new Vector3(2f * Time.deltaTime, 0f, 0f);
+                if (transform.position.x <= startPosition.x + width)
+                {
+                    moveFlag = false;
+                }
+            }
+            else
+            {
+                transform.position += new Vector3(2f * Time.deltaTime, 0f, 0f);
+                if (transform.position.x >= startPosition.x)
+                {
+                    moveFlag = true;
+                }
             }
         }
         else
         {
-            transform.position -= new Vector3(2f * Time.deltaTime, 0f, 0f);
-            if (transform.position.x <= startPosition.x)
-            {
-                moveFlag = true;
-            }
+            pattern = 0;
         }
+       
     }
+    //前後移動
     void MoveFrontBack()
     {
-        if (moveFlag)
+        //初動+方向
+        if (width > 0)
         {
-            transform.position += new Vector3(0f, 0f, 2f * Time.deltaTime);
-            if (transform.position.z >= startPosition.z + width)
+            if (moveFlag)
             {
-                moveFlag = false;
+                transform.position += new Vector3(0f, 0f, 2f * Time.deltaTime);
+                if (transform.position.z >= startPosition.z + width)
+                {
+                    moveFlag = false;
+                }
+            }
+            else
+            {
+                transform.position -= new Vector3(0f, 0f, 2f * Time.deltaTime);
+                if (transform.position.z <= startPosition.z)
+                {
+                    moveFlag = true;
+                }
+            }
+        }
+        //初動-方向
+        else if (width < 0)
+        {
+            if (moveFlag)
+            {
+                transform.position -= new Vector3(0f, 0f, 2f * Time.deltaTime);
+                if (transform.position.z <= startPosition.z + width)
+                {
+                    moveFlag = false;
+                }
+            }
+            else
+            {
+                transform.position += new Vector3(0f, 0f, 2f * Time.deltaTime);
+                if (transform.position.z >= startPosition.z)
+                {
+                    moveFlag = true;
+                }
             }
         }
         else
         {
-            transform.position -= new Vector3(0f, 0f, 2f * Time.deltaTime);
-            if (transform.position.z <= startPosition.z)
-            {
-                moveFlag = true;
-            }
+            pattern = 0;
         }
     }
+    //上下移動
     void MoveUpDown()
     {
-    }
-
-    private void OnCollisionEnter(Collision collision)
-    {
-        if (collision.gameObject.tag == "Player")
+        //初動+方向
+        if (width > 0)
         {
-            Destroy(gameObject);
+            if (moveFlag)
+            {
+                transform.position += new Vector3(0f, 2f * Time.deltaTime, 0f);
+                if (transform.position.y >= startPosition.y + width)
+                {
+                    moveFlag = false;
+                }
+            }
+            else
+            {
+                transform.position -= new Vector3(0f, 2f * Time.deltaTime, 0f);
+                if (transform.position.y <= startPosition.y)
+                {
+                    moveFlag = true;
+                }
+            }
         }
+        //初動-方向
+        else if (width < 0)
+        {
+            if (moveFlag)
+            {
+                transform.position -= new Vector3(0f, 2f * Time.deltaTime, 0f);
+                if (transform.position.y <= startPosition.y + width)
+                {
+                    moveFlag = false;
+                }
+            }
+            else
+            {
+                transform.position += new Vector3(0f, 2f * Time.deltaTime, 0f);
+                if (transform.position.y >= startPosition.y)
+                {
+                    moveFlag = true;
+                }
+            }
+        }
+        else
+        {
+            pattern = 0;
+        }
+
+    }
+    //時計回りの円運動
+    void MoveCircle()
+    {
+        transform.position = new Vector3((float)width * Mathf.Sin(Time.time * 2f) + startPosition.x, startPosition.y, ((float)width * Mathf.Cos(Time.time * 2f)) + startPosition.z);
     }
 }
