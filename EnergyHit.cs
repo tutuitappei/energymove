@@ -1,6 +1,7 @@
 ﻿using System.Collections;
 using System.Collections.Generic;
 using UnityEngine;
+using Player;
 
 public class EnergyHit : MonoBehaviour, IHitPlayer
 {
@@ -8,10 +9,12 @@ public class EnergyHit : MonoBehaviour, IHitPlayer
     public float _chargmoment = 1.0f;   //エネルギーの量
 
     private bool smallFlag;             //エネルギーの縮小フラグ
+    private GameObject _uiMng;
 
     // Start is called before the first frame update
     void Start()
     {
+        _uiMng = GameObject.Find("UIMng");
         smallFlag = false;
     }
 
@@ -37,6 +40,11 @@ public class EnergyHit : MonoBehaviour, IHitPlayer
     //プレイヤーとの当たり判定
     public void HitPlayer(GameObject player)
     {
+        if (smallFlag == true)
+        {
+            return;
+        }
+        //UIMng.instance.getStar = true;
         smallFlag = true;
     }
 }

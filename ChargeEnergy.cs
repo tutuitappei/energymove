@@ -18,4 +18,22 @@ public class ChargeEnergy : MonoBehaviour, Chargeer
         energymoment += energy;
         Debug.Log("add: " + energy + "total: " + energymoment);
     }
+
+    // ゲット関数
+    public float EnergyMoment()
+    {
+        return energymoment;
+    }
+
+    // 引数で受け取った分エネルギーをとる
+    public void PullEnergy(float amount)
+    {
+        energymoment -= amount;
+
+        // バグ防止
+        if (energymoment < 0)
+        {
+            energymoment = 0;
+        }
+    }
 }

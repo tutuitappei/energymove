@@ -13,6 +13,7 @@ public class EnergyMove : MonoBehaviour
 
      private float startTime = 0.0f;                    //動き初めのタイミング
     [SerializeField] private float waittime = 0.0f;     //動くまでの間
+    [SerializeField] private float Emovespeed = 0.0f;   //動きの速度
 
     private Vector3 startPosition;                      //動く前のポジション
     [SerializeField] private double width = 0.0;        //動きの幅
@@ -32,12 +33,10 @@ public class EnergyMove : MonoBehaviour
         startTime += Time.deltaTime;
         transform.Rotate(new Vector3(0,rotation,0));
         
-        if (startTime >= waittime)
+        if ((startTime >= waittime)&&(width != 0.0))
         {
             switch (pattern)
             {
-                case 0:
-                    break;
                 case 1:
                     MoveLR();
                     break;
@@ -49,6 +48,9 @@ public class EnergyMove : MonoBehaviour
                     break;
                 case 4:
                     MoveCircle();
+                    break;
+                case 5:
+                    anotheCircle();
                     break;
                 default:
                     break;
@@ -64,7 +66,7 @@ public class EnergyMove : MonoBehaviour
         {
             if (moveFlag)
             {
-                transform.position += new Vector3(2f * Time.deltaTime, 0f, 0f);
+                transform.position += new Vector3(Emovespeed * Time.deltaTime, 0f, 0f);
                 if (transform.position.x >= startPosition.x + width)
                 {
                     moveFlag = false;
@@ -72,7 +74,7 @@ public class EnergyMove : MonoBehaviour
             }
             else
             {
-                transform.position -= new Vector3(2f * Time.deltaTime, 0f, 0f);
+                transform.position -= new Vector3(Emovespeed * Time.deltaTime, 0f, 0f);
                 if (transform.position.x <= startPosition.x)
                 {
                     moveFlag = true;
@@ -80,11 +82,11 @@ public class EnergyMove : MonoBehaviour
             }
         }
         //初動-方向
-        else if (width < 0)
+        else
         {
             if (moveFlag)
             {
-                transform.position -= new Vector3(2f * Time.deltaTime, 0f, 0f);
+                transform.position -= new Vector3(Emovespeed * Time.deltaTime, 0f, 0f);
                 if (transform.position.x <= startPosition.x + width)
                 {
                     moveFlag = false;
@@ -92,18 +94,13 @@ public class EnergyMove : MonoBehaviour
             }
             else
             {
-                transform.position += new Vector3(2f * Time.deltaTime, 0f, 0f);
+                transform.position += new Vector3(Emovespeed * Time.deltaTime, 0f, 0f);
                 if (transform.position.x >= startPosition.x)
                 {
                     moveFlag = true;
                 }
             }
-        }
-        else
-        {
-            pattern = 0;
-        }
-       
+        }    
     }
     //前後移動
     void MoveFrontBack()
@@ -113,7 +110,7 @@ public class EnergyMove : MonoBehaviour
         {
             if (moveFlag)
             {
-                transform.position += new Vector3(0f, 0f, 2f * Time.deltaTime);
+                transform.position += new Vector3(0f, 0f, Emovespeed * Time.deltaTime);
                 if (transform.position.z >= startPosition.z + width)
                 {
                     moveFlag = false;
@@ -121,7 +118,7 @@ public class EnergyMove : MonoBehaviour
             }
             else
             {
-                transform.position -= new Vector3(0f, 0f, 2f * Time.deltaTime);
+                transform.position -= new Vector3(0f, 0f, Emovespeed * Time.deltaTime);
                 if (transform.position.z <= startPosition.z)
                 {
                     moveFlag = true;
@@ -129,11 +126,11 @@ public class EnergyMove : MonoBehaviour
             }
         }
         //初動-方向
-        else if (width < 0)
+        else
         {
             if (moveFlag)
             {
-                transform.position -= new Vector3(0f, 0f, 2f * Time.deltaTime);
+                transform.position -= new Vector3(0f, 0f, Emovespeed * Time.deltaTime);
                 if (transform.position.z <= startPosition.z + width)
                 {
                     moveFlag = false;
@@ -141,16 +138,12 @@ public class EnergyMove : MonoBehaviour
             }
             else
             {
-                transform.position += new Vector3(0f, 0f, 2f * Time.deltaTime);
+                transform.position += new Vector3(0f, 0f, Emovespeed * Time.deltaTime);
                 if (transform.position.z >= startPosition.z)
                 {
                     moveFlag = true;
                 }
             }
-        }
-        else
-        {
-            pattern = 0;
         }
     }
     //上下移動
@@ -161,7 +154,7 @@ public class EnergyMove : MonoBehaviour
         {
             if (moveFlag)
             {
-                transform.position += new Vector3(0f, 2f * Time.deltaTime, 0f);
+                transform.position += new Vector3(0f, Emovespeed * Time.deltaTime, 0f);
                 if (transform.position.y >= startPosition.y + width)
                 {
                     moveFlag = false;
@@ -169,7 +162,7 @@ public class EnergyMove : MonoBehaviour
             }
             else
             {
-                transform.position -= new Vector3(0f, 2f * Time.deltaTime, 0f);
+                transform.position -= new Vector3(0f, Emovespeed * Time.deltaTime, 0f);
                 if (transform.position.y <= startPosition.y)
                 {
                     moveFlag = true;
@@ -177,11 +170,11 @@ public class EnergyMove : MonoBehaviour
             }
         }
         //初動-方向
-        else if (width < 0)
+        else
         {
             if (moveFlag)
             {
-                transform.position -= new Vector3(0f, 2f * Time.deltaTime, 0f);
+                transform.position -= new Vector3(0f, Emovespeed * Time.deltaTime, 0f);
                 if (transform.position.y <= startPosition.y + width)
                 {
                     moveFlag = false;
@@ -189,22 +182,32 @@ public class EnergyMove : MonoBehaviour
             }
             else
             {
-                transform.position += new Vector3(0f, 2f * Time.deltaTime, 0f);
+                transform.position += new Vector3(0f, Emovespeed * Time.deltaTime, 0f);
                 if (transform.position.y >= startPosition.y)
                 {
                     moveFlag = true;
                 }
             }
         }
-        else
-        {
-            pattern = 0;
-        }
 
     }
     //時計回りの円運動
+    //Y軸回転
     void MoveCircle()
     {
-        transform.position = new Vector3((float)width * Mathf.Sin(Time.time * 2f) + startPosition.x, startPosition.y, ((float)width * Mathf.Cos(Time.time * 2f)) + startPosition.z);
+        transform.position = new Vector3((float)width * Mathf.Sin(Time.time * Emovespeed) + startPosition.x, startPosition.y, ((float)width * Mathf.Cos(Time.time * Emovespeed)) + startPosition.z);
+    }
+    void anotheCircle()
+    {
+        if (width > 0)
+        {
+            //X軸回転
+            transform.position = new Vector3(startPosition.x, (float)width * Mathf.Sin(Time.time * Emovespeed) + startPosition.y, ((float)width * Mathf.Cos(Time.time * Emovespeed)) + startPosition.z);
+        }
+        else
+        {
+            //Z軸回転
+            transform.position = new Vector3((float)+width * Mathf.Sin(Time.time * Emovespeed) + startPosition.x, ((float)+width * Mathf.Cos(Time.time * Emovespeed)) + startPosition.y, startPosition.z);
+        }
     }
 }
